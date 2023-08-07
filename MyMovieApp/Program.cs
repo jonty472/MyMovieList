@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MyMovieApp
 {
@@ -24,7 +25,7 @@ namespace MyMovieApp
             public int id { get; set; }
             public string release_date { get; set; }
             public string title { get; set; }
-
+            
         }
 
         // HttpClient is intended to be instantiated once per application, rather than per-use. See Remarks.
@@ -41,6 +42,7 @@ namespace MyMovieApp
             string movieRequestTask = await GetMovieAysnc(client);
             List<Movie> movies = DeserializingMovieAsync(movieRequestTask);
             AddMovieToDb(movies);
+
         }
 
         public static async Task<string> GetMovieAysnc(HttpClient client)
@@ -97,7 +99,7 @@ namespace MyMovieApp
                     string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
 
                     string cmdText =
-                        "INSERT INTO Movies (ID, Title, ReleaseYear)" +
+                        "INSERT INTO Movies (ID, MovieTitle, ReleaseYear)" +
                         "VALUES (@ID, @Title, @ReleaseYear);";
 
                     using (SqlConnection connection = new SqlConnection(connectionString))
@@ -108,7 +110,7 @@ namespace MyMovieApp
 
                             command.Parameters.Add("@ID", SqlDbType.Int).Value = movie.id;
                             command.Parameters.AddWithValue("@Title", SqlDbType.VarChar).Value = movie.title;
-                            command.Parameters.AddWithValue("@ReleaseYear", SqlDbType.Int).Value = movie.release_date;
+                            command.Parameters.AddWithValue("@ReleaseYear", SqlDbType.Int).Value = DateTimeOffset.Parse(movie.release_date).ToUnixTimeSeconds();
 
                             try
                             {
