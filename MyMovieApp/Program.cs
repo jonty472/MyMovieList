@@ -28,10 +28,11 @@ namespace MyMovieApp
              * pass that object into the database
              */
 
-            string movieRequestTask = await MovieList.GetMovieAysnc(client);
-            List<Movie> movies = MovieList.DeserializingMovieAsync(movieRequestTask);
-            MovieList.AddMovieToDb(movies);
+            //string movieRequestTask = await MovieList.GetMovieAysnc(client);
+            //List<Movie> movies = MovieList.DeserializingMovieAsync(movieRequestTask);
+            //MovieList.AddMovieToDb(movies);
 
+            User User1 = new User("Jonty");
         }
     }
 }

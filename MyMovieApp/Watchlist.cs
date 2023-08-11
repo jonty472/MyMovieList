@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyMovieApp
 {
-    internal class Watchlist
+    public class Watchlist
     {
     }
 }
