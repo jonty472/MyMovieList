@@ -11,6 +11,12 @@ namespace MyMovieApp
 {
     public class MovieList
     {
+
+        /// <summary>
+        /// Class method will prompt a user via console for a movie title and release year
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>A jsonResponse string from The Movie Database (TMDB) API</returns>
         public static async Task<string> GetMovieAysnc(HttpClient client)
         {
             Console.WriteLine("What movie are you looking for?");

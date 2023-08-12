@@ -17,7 +17,10 @@ namespace MyMovieApp
          * Have different users that hae their own movie list
          */
 
-        // HttpClient is intended to be instantiated once per application, rather than per-use. See Remarks.
+        /// <summary>
+        /// HttpClient is intended to be instantiated once per application, rather than per-use.
+        /// This is done to reduce the chances of a socket error
+        /// </summary>
         public static readonly HttpClient client = new HttpClient();
 
         static async Task Main(string[] args)

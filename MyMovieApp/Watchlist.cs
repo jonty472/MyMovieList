@@ -8,5 +8,7 @@ namespace MyMovieApp
 {
     public class Watchlist
     {
+
+
     }
 }
