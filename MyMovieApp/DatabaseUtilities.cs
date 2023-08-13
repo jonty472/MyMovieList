@@ -10,33 +10,33 @@ namespace MyMovieApp
     public class DatabaseUtilities
     {
         /// <summary>
-        /// returns void, but informs you if the there is a row
+        /// returns 0 if row exists else 1 if row does not exist.
         /// </summary>
         /// <param name="args"></param>
-        static void CheckRowExists(string[] args)
+        public static int CheckRowExists(string conditionValue, string connectionString)
         {
-            string connectionString = "your_connection_string";
-            string conditionValue = "desired_value_to_check";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = "SELECT 1 FROM @YourTable WHERE @ColumnName = @Value";
+                string query = "SELECT COUNT(*) FROM Movies WHERE MovieTitle = @Value";
+
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.Add("@YourTable", System.Data.SqlDbType.).Value = conditionValue;
                     command.Parameters.AddWithValue("@Value", conditionValue);
 
-                    object result = command.ExecuteScalar();
+                    int rowCount = Convert.ToInt32(command.ExecuteScalar());
 
-                    if (result != null && result != DBNull.Value)
+                    if (rowCount > 0)
                     {
                         Console.WriteLine("Row exists.");
+                        return 0;
                     }
                     else
                     {
                         Console.WriteLine("Row does not exist.");
+                        return 1;
                     }
                 }
             }

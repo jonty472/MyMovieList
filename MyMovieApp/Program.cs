@@ -36,6 +36,7 @@ namespace MyMovieApp
             //MovieList.AddMovieToDb(movies);
 
             User User1 = new User("Jonty");
+            User1.AddMovieToWatchlist("Oldboy");
         }
     }
 }

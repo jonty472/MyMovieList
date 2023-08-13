@@ -66,35 +66,28 @@ namespace MyMovieApp
                 return 1;
             }
 
+
             string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
-
-            string conditionValue = movietitle;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            if (DatabaseUtilities.CheckRowExists(movietitle, connectionString) == 0)
             {
-
-                string commandText = "SELECT COUNT(*) FROM Movies.MovieTitle WHERE Movies.MovieTitle = @Value";
-
-                using (SqlCommand command = new SqlCommand(commandText, connection))
-                {
-                    command.Parameters.AddWithValue(conditionValue, movietitle);
-
-                    int rowCount = Convert.ToInt32(command.ExecuteScalar());
-
-                    if (rowCount > 0)
-                    {
-                        Console.WriteLine("Row exists.");
-                        return 0;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Row does not exist.");
-                        MovieList.GetMovieAysnc(Program.client);
-                        AddMovieToWatchlist(movietitle);
-                        return 1;
-                    }
-                }
+                return 0;
             }
+            else
+            {
+                // Didn't program AddMovieToDB very well, so have to call all the other methods to get the parameter needed.
+                Task<string> jsonResponse = MovieList.GetMovieAysnc(Program.client);
+                string json = jsonResponse.ToString();
+
+                List<Movie> movie = MovieList.DeserializingMovieAsync(json);
+
+
+                MovieList.AddMovieToDb(movie);
+
+                return 1;
+            }
+                
+                
+            
 
         }
 
