@@ -17,64 +17,40 @@ namespace MyMovieApp
         /// </summary>
         /// <param name="client"></param>
         /// <returns>A jsonResponse string from The Movie Database (TMDB) API</returns>
-        public static async Task<string> GetMovieAysnc(HttpClient client)
+        public static async Task<string> GetMovieAysnc(HttpClient client, string movietitle, string releaseyear)
         {
-            Console.WriteLine("What movie are you looking for?");
-            string movieTitle = Console.ReadLine();
-            Console.WriteLine($"What year was it released?");
-            string releaseYear = Console.ReadLine();
-
-            using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={movieTitle}&year={releaseYear}");
+            using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={movietitle}&year={releaseyear}");
             string jsonResponse = await response.Content.ReadAsStringAsync();
             return jsonResponse;
         }
 
-        public static List<Movie> DeserializingMovieAsync(string jsonResponse)
+        
+        /// <summary>
+        /// deserialzes a jsonResponse into a movie object and adds the movies elements to the database
+        /// </summary>
+        /// <param name="jsonResponse"></param>
+        public static void AddMovieToDb(string jsonResponse)
         {
-            RootObject? movies = JsonConvert.DeserializeObject<RootObject?>(jsonResponse);
+     
+            RootObject? movieRequest = JsonConvert.DeserializeObject<RootObject?>(jsonResponse);
 
-            List<Movie> movie = new List<Movie>();
+            List<Movie> movies = new List<Movie>();
 
-            foreach (var property in movies.results)
+            foreach (var property in movieRequest.results)
             {
-                movie.Add(new Movie() { id = property.id, title = property.title, release_date = property.release_date });
+                movies.Add(new Movie() { id = property.id, title = property.title, release_date = property.release_date });
             }
-
-            foreach (var i in movie)
-            {
-                Console.WriteLine(i.title + i.release_date + i.title);
-            }
-
-            return movie;
-        }
-
-        public static void AddMovieToDb(List<Movie> movies)
-        {
 
 
             foreach (var movie in movies)
             {
                 Console.WriteLine(movie.title);
-                Console.WriteLine("Is this the movie you are trying to add? (Y/N): ");
-                var response = Console.ReadLine();
-                if (movies.Count == 0)
                 {
-                    Console.WriteLine("couldn't find that movie");
-                    break;
-                }
-                if (response == "N")
-                {
-                    continue;
-                }
-                if (response == "Y")
-                {
-                    string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
-
                     string cmdText =
                         "INSERT INTO Movies (ID, MovieTitle, ReleaseYear)" +
                         "VALUES (@ID, @Title, @ReleaseYear);";
 
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    using (SqlConnection connection = new SqlConnection(Program.connectionString))
                     {
 
                         using (SqlCommand command = new SqlCommand(cmdText, connection))

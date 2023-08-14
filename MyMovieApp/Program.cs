@@ -22,7 +22,8 @@ namespace MyMovieApp
         /// This is done to reduce the chances of a socket error
         /// </summary>
         public static readonly HttpClient client = new HttpClient();
-
+        
+        public static readonly string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
         static async Task Main(string[] args)
         {
             /*
@@ -31,12 +32,17 @@ namespace MyMovieApp
              * pass that object into the database
              */
 
-            //string movieRequestTask = await MovieList.GetMovieAysnc(client);
-            //List<Movie> movies = MovieList.DeserializingMovieAsync(movieRequestTask);
-            //MovieList.AddMovieToDb(movies);
+            Console.WriteLine("Movie? ");
+            string? movietitle = Console.ReadLine();
 
-            User User1 = new User("Jonty");
-            User1.AddMovieToWatchlist("Oldboy");
+            Console.WriteLine("Release Year? ");
+            string? releaseyear = Console.ReadLine();
+
+            string movieRequestTask = await MovieList.GetMovieAysnc(client, movietitle, releaseyear);
+            Console.WriteLine(movieRequestTask);
+            
+            MovieList.AddMovieToDb(movieRequestTask);
+
         }
     }
 }

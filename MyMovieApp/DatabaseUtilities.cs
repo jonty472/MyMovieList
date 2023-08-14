@@ -13,7 +13,7 @@ namespace MyMovieApp
         /// returns 0 if row exists else 1 if row does not exist.
         /// </summary>
         /// <param name="args"></param>
-        public static int CheckRowExists(string conditionValue, string connectionString)
+        public static void CheckRowExists(string conditionValue, string connectionString)
         {
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -31,12 +31,10 @@ namespace MyMovieApp
                     if (rowCount > 0)
                     {
                         Console.WriteLine("Row exists.");
-                        return 0;
                     }
                     else
                     {
                         Console.WriteLine("Row does not exist.");
-                        return 1;
                     }
                 }
             }

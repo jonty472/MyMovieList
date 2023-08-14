@@ -26,13 +26,11 @@ namespace MyMovieApp
         public void CreateUser(string username)
         {
 
-            string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
-
             string cmdText =
                 "INSERT INTO Users (UserName)" +
                 "VALUES (@UserName);";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
             {
 
                 using (SqlCommand command = new SqlCommand(cmdText, connection))
@@ -53,7 +51,7 @@ namespace MyMovieApp
             }
         }
 
-        public int AddMovieToWatchlist(string movietitle)
+        public void AddMovieToWatchlist(string movietitle)
         {
             // if movie exist in database
                 // insert movie into the UsersWatchlist table (use instance _username to insert into correcet watchlist).
@@ -63,31 +61,28 @@ namespace MyMovieApp
 
             if (string.IsNullOrEmpty(movietitle))
             {
-                return 1;
             }
 
-
-            string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
-            if (DatabaseUtilities.CheckRowExists(movietitle, connectionString) == 0)
+            if (DatabaseUtilities.CheckRowExists(movietitle) == 0)
             {
-                return 0;
+                //string cmdText = "INSERT INTO UsersWatchlist (UserID, MovieID) VALUES (@UserID, @MovieID)";
+                string cmdText = "SELECT * FROM Movies WHERE MovieTitle = @movietitle";
+
+
+                using (SqlConnection connection = new SqlConnection(Program.connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(cmdText, connection))
+                    {
+                        connection.Open();
+                        command.Parameters.Add("@movietitle", SqlDbType.VarChar).Value = movietitle;
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
             else
             {
-                // Didn't program AddMovieToDB very well, so have to call all the other methods to get the parameter needed.
-                Task<string> jsonResponse = MovieList.GetMovieAysnc(Program.client);
-                string json = jsonResponse.ToString();
-
-                List<Movie> movie = MovieList.DeserializingMovieAsync(json);
-
-
-                MovieList.AddMovieToDb(movie);
-
-                return 1;
+                Console.WriteLine("Movie doesn't exist in movie database");  
             }
-                
-                
-            
 
         }
 
@@ -99,5 +94,6 @@ namespace MyMovieApp
 
     }
 }
+
 
 
