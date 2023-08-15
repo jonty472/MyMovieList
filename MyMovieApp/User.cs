@@ -11,6 +11,13 @@ namespace MyMovieApp
     internal class User
     {
         private string _username;
+
+        public string Username
+        {
+            get { return _username; }
+            set { _username = value; }
+        }
+
         public User(string username)
         {
             _username = username;
@@ -18,7 +25,7 @@ namespace MyMovieApp
             CreateUser(_username);
         }
 
-        public string getUsername()
+        public string GetUsername()
         {
             return _username;
         }
@@ -51,7 +58,7 @@ namespace MyMovieApp
             }
         }
 
-        public void AddMovieToWatchlist(string movietitle)
+        public static void AddMovieToWatchlist(string movietitle, string username)
         {
             // if movie exist in database
                 // insert movie into the UsersWatchlist table (use instance _username to insert into correcet watchlist).
@@ -63,25 +70,24 @@ namespace MyMovieApp
             {
             }
 
+            int movieID = DatabaseUtilities.GetDatabaseRecordID(1, movietitle);
+            int userID = DatabaseUtilities.GetDatabaseRecordID(2, username);
+
             if (DatabaseUtilities.CheckRowExists(movietitle) == 0)
             {
-                //string cmdText = "INSERT INTO UsersWatchlist (UserID, MovieID) VALUES (@UserID, @MovieID)";
-                string cmdText = "SELECT * FROM Movies WHERE MovieTitle = @movietitle";
-
-
                 using (SqlConnection connection = new SqlConnection(Program.connectionString))
                 {
+                    connection.Open();
+
+                    string cmdText = "INSERT INTO UsersWatchlist (MovieID, UserID) VALUES (@MovieID, @UserID)";
+
                     using (SqlCommand command = new SqlCommand(cmdText, connection))
                     {
-                        connection.Open();
-                        command.Parameters.Add("@movietitle", SqlDbType.VarChar).Value = movietitle;
-                        command.ExecuteNonQuery();
+                        command.Parameters.Add("@MovieID", SqlDbType.Int).Value = movieID;
+                        command.Parameters.AddWithValue("@UserID", SqlDbType.Int).Value = userID;
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine("Movie doesn't exist in movie database");  
+                
             }
 
         }

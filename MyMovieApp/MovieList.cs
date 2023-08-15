@@ -47,8 +47,8 @@ namespace MyMovieApp
                 Console.WriteLine(movie.title);
                 {
                     string cmdText =
-                        "INSERT INTO Movies (ID, MovieTitle, ReleaseYear)" +
-                        "VALUES (@ID, @Title, @ReleaseYear);";
+                        "INSERT INTO Movies (MovieID, MovieTitle, ReleaseDate)" +
+                        "VALUES (@ID, @Title, @ReleaseDate);";
 
                     using (SqlConnection connection = new SqlConnection(Program.connectionString))
                     {
@@ -58,7 +58,7 @@ namespace MyMovieApp
 
                             command.Parameters.Add("@ID", SqlDbType.Int).Value = movie.id;
                             command.Parameters.AddWithValue("@Title", SqlDbType.VarChar).Value = movie.title;
-                            command.Parameters.AddWithValue("@ReleaseYear", SqlDbType.Int).Value = DateTimeOffset.Parse(movie.release_date).ToUnixTimeSeconds();
+                            command.Parameters.AddWithValue("@ReleaseDate", SqlDbType.Int).Value = DateTimeOffset.Parse(movie.release_date).ToUnixTimeSeconds();
 
                             try
                             {

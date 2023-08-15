@@ -38,10 +38,13 @@ namespace MyMovieApp
             Console.WriteLine("Release Year? ");
             string? releaseyear = Console.ReadLine();
 
-            string movieRequestTask = await MovieList.GetMovieAysnc(client, movietitle, releaseyear);
-            Console.WriteLine(movieRequestTask);
-            
-            MovieList.AddMovieToDb(movieRequestTask);
+            //string movieRequestTask = await MovieList.GetMovieAysnc(client, movietitle, releaseyear);
+            //Console.WriteLine(movieRequestTask);
+
+            //MovieList.AddMovieToDb(movieRequestTask);
+            User user = new User("jonty472");
+            string username = user.GetUsername();
+            User.AddMovieToWatchlist(movietitle, username);
 
         }
     }

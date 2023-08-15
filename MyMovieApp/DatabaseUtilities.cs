@@ -13,10 +13,10 @@ namespace MyMovieApp
         /// returns 0 if row exists else 1 if row does not exist.
         /// </summary>
         /// <param name="args"></param>
-        public static void CheckRowExists(string conditionValue, string connectionString)
+        public static int CheckRowExists(string conditionValue)
         {
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
             {
                 connection.Open();
 
@@ -31,13 +31,66 @@ namespace MyMovieApp
                     if (rowCount > 0)
                     {
                         Console.WriteLine("Row exists.");
+                        return 0;
                     }
                     else
                     {
                         Console.WriteLine("Row does not exist.");
+                        return 1;
                     }
                 }
             }
         }
+
+
+        public static void EnterDataIntoMovieDB(int table, string value)
+        {
+
+        }
+        
+        
+        public static int GetDatabaseRecordID(int movieIdOrUsername, string value)
+        {
+
+            string query = "";
+            switch (movieIdOrUsername)
+            {
+
+                case 1:
+                    query += "SELECT MovieID FROM Movies WHERE MovieTitle = @Value";
+                    break;
+
+                case 2:
+                    query += "SELECT UserID FROM Users Where UserName = @Value";
+                    break;
+            }
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+
+                    command.Parameters.Add("@Value", System.Data.SqlDbType.VarChar).Value = value;
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int recordID = reader.GetInt32(0);
+                            Console.WriteLine($"{recordID}");
+                            return recordID;
+                        }
+                        else
+                        {
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
     }
 }
