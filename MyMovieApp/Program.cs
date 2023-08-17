@@ -42,9 +42,10 @@ namespace MyMovieApp
             //Console.WriteLine(movieRequestTask);
 
             //MovieList.AddMovieToDb(movieRequestTask);
-            User user = new User("jonty472");
+            User user = new User("jonty");
             string username = user.GetUsername();
             User.AddMovieToWatchlist(movietitle, username);
+            User.GetUsersWatchlist();
 
         }
     }

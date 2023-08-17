@@ -92,10 +92,32 @@ namespace MyMovieApp
 
         }
 
-        public void DisplayUsersWatchlist()
+        public static void GetUsersWatchlist(string username)
         {
-            // use _username as @UserName
-            
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+                string query =
+                    "SELECT MovieTitle, ReleaseDate FROM Movies" +
+                    "JOIN UsersWatchlist on MovieID = Movies.MovieID" +
+                    "JOIN Users on UserWatchlist.UserID = UserID" +
+                    "WHERE UserName = @Value";
+                using SqlCommand command = new SqlCommand(query, connection);
+                {
+                    command.Parameters.Add("@Value", SqlDbType.VarChar).Value = username;
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string movieTitle = reader.GetString(1);
+                            int releaseDate = reader.GetInt32(2);
+                            Console.Write($"{movieTitle}{releaseDate}", movieTitle, releaseDate); ;
+                        }
+                    }
+                }
+            }
         }
 
     }
