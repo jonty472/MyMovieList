@@ -15,8 +15,29 @@ namespace MyMovieApp
 
             while (showMainMenu)
             {
+                LoginMenu();
                 showMainMenu = MainMenu();
             }
+        }
+
+        public static string LoginMenu()
+        {
+            Console.WriteLine("1) Login");
+            Console.WriteLine("2) Create account");
+
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    Console.Write("Username: ");
+                    string username = Console.ReadLine();
+                    return username;
+                case "2":
+                    Console.Write("Username? ");
+                    string newUsername = Console.ReadLine();
+                    return newUsername;
+            };
+
+            return "";
         }
 
         public static async bool MainMenu()
@@ -41,13 +62,7 @@ namespace MyMovieApp
 
                     return false;
 
-                case "2":
-                    User.AddMovieToWatchlist();
-                    return false;
 
-                case "3":
-                    User.CreateUser();
-                    return false;
             }
         }
     }

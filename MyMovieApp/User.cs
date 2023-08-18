@@ -103,6 +103,7 @@ namespace MyMovieApp
                     "JOIN UsersWatchlist on MovieID = Movies.MovieID" +
                     "JOIN Users on UserWatchlist.UserID = UserID" +
                     "WHERE UserName = @Value";
+
                 using SqlCommand command = new SqlCommand(query, connection);
                 {
                     command.Parameters.Add("@Value", SqlDbType.VarChar).Value = username;
