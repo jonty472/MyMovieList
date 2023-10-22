@@ -6,35 +6,99 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace MyMovieApp
 {
-    internal class Program
+
+    public class MovieList
     {
-
-        /*
-         * MVP -
-         * GET request movie(s)
-         * Deserialize movie GET request into a Movie object
-         * Choose the correct movie to add to database
-         * Have different users that hae their own movie list
-         */
-
-        /// <summary>
-        /// HttpClient is intended to be instantiated once per application, rather than per-use.
-        /// This is done to reduce the chances of a socket error
-        /// </summary>
-        public static readonly HttpClient client = new HttpClient();
-
-        public static readonly string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
-        static async Task Main(string[] args)
+        private List<Movie> movieList;
+        public MovieList()
         {
-            /*
-             * create a Task<t> that awaits a GET request for a movie
-             * Pass the result of Task<t> into a method that deseralizes into an instances of an object
-             * pass that object into the database
-             */
+            movieList = new List<Movie>();
+            //movieList.Add(new Movie() { id = 22, title = "Test", release_date = "2023" });
 
-            MovieList myList = new MovieList();
-            string jsonResponse = await myList.GetMovieAysnc(client, "Gladiator", "2000");
-            myList.AddMovieAysnc(jsonResponse);
+
         }
+
+        // get movie
+        // add movie
+        // remove movie
+        // update movie
+        // get movie list
+
+        public async Task<Movie> GetMovieAysnc(HttpClient client, string title, int releaseYear)
+        {
+            using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={title}&year={releaseYear}");
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            Movie movie = DeserializingMovieAsync(jsonResponse);
+            return movie;
+        }
+
+        private Movie DeserializingMovieAsync(string jsonResponse)
+        {
+            RootObject? movies = JsonConvert.DeserializeObject<RootObject?>(jsonResponse);
+            
+            Movie correctMovie = new Movie();
+
+            foreach (var movie in movies.results)
+            {
+                if (IsCorrectMovie(movie))
+                {
+                    correctMovie.id = movie.id;
+                    correctMovie.title = movie.title;
+                    correctMovie.release_date = movie.release_date;
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        
+            return correctMovie;
+            
+        }
+
+        private bool IsCorrectMovie(Movie movie)
+        {
+            bool isCorrectMovie = false;
+            
+            Console.Write($"Your movie: {movie.title}? Y/N: ");
+            string? chooseYesNo = Console.ReadLine();
+            if (chooseYesNo.ToLower() == "y")
+            {
+                isCorrectMovie = true;
+            }
+            else
+            {
+                return false;
+            }
+            return isCorrectMovie;
+        }
+
+        public void AddMovie(Movie movie)
+        {
+            Console.WriteLine($"{movie.title} has been added to your list");
+            movieList.Add(movie);
+        }
+
+        public void RemoveMovie(Movie movie)
+        {
+            movieList.Remove(movie);
+        }
+
+        public void DisplayMovieList()
+        {
+            foreach (var movie in movieList)
+            {
+                if (movieList.Count < 1)
+                {
+                    Console.WriteLine("Your movie list is empty");
+                }
+                else
+                {
+                    Console.WriteLine($"{movie.id}, {movie.title}, {movie.release_date}");
+                }
+            }
+        }
+
     }
 }

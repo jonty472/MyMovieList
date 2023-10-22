@@ -26,15 +26,14 @@ namespace MyMovieApp
         public static readonly string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
         static async Task Main(string[] args)
         {
-            /*
-             * create a Task<t> that awaits a GET request for a movie
-             * Pass the result of Task<t> into a method that deseralizes into an instances of an object
-             * pass that object into the database
-             */
-
+            
             MovieList myList = new MovieList();
-            string jsonResponse = await myList.GetMovieAysnc(client, "Gladiator", "2000");
-            myList.AddMovieAysnc(jsonResponse);
+            
+            Movie movie = await myList.GetMovieAysnc(client, "Gladiator", 2000);
+            //Movie movie2 = await myList.GetMovieAysnc(client, "Oldboy", 2003);
+            myList.AddMovie(movie);
+            //myList.AddMovie(movie2);
+            myList.DisplayMovieList();
         }
     }
 }
