@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace MyMovieApp
@@ -45,6 +46,8 @@ namespace MyMovieApp
                     correctMovie.id = movie.id;
                     correctMovie.title = movie.title;
                     correctMovie.release_date = movie.release_date;
+                    correctMovie.vote_average = movie.vote_average;
+                    correctMovie.vote_count = movie.vote_count;
                     break;
                 }
                 else
@@ -76,12 +79,46 @@ namespace MyMovieApp
 
         public void AddMovie(Movie movie)
         {
-            Console.WriteLine($"{movie.title} has been added to your list");
+            Console.WriteLine($"{movie.title} has been ADDED to your list");
             movieList.Add(movie);
+        }
+
+        private void AddWatchListToDatabase()
+        {
+            foreach (var movie in movieList)
+            {
+                if (IsMovieInDb())
+                {
+                    string cmd = "INSERT INTO Movies (Id, Title, ReleaseDate, AudienceRating, VoteCount) VALUES (@ID, @Title, @ReleaseDate, @AudienceRating, @VoteCount)";
+
+                    using (SqlConnection connection = new SqlConnection(Program.connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(cmd, connection))
+                        {
+                            command.Parameters.Add("@Id", SqlDbType.BigInt).SqlValue = movie.id;
+                            command.Parameters.AddWithValue("@Title", SqlDbType.VarChar).Value = movie.title;
+                            command.Parameters.AddWithValue("@ReleaseDate", SqlDbType.BigInt).Value = movie.release_date;
+                            command.Parameters.AddWithValue("@AudienceRating", SqlDbType.Float).Value = movie.vote_average;
+                            command.Parameters.AddWithValue("@VoteCount", SqlDbType.Float).Value = movie.vote_count;
+
+                        }
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+
+        private bool IsMovieInDb()
+        {
+            return false;
         }
 
         public void RemoveMovie(Movie movie)
         {
+            Console.WriteLine($"{movie.title} has been REMOVED from your movie list");
             movieList.Remove(movie);
         }
 
@@ -95,10 +132,61 @@ namespace MyMovieApp
                 }
                 else
                 {
-                    Console.WriteLine($"{movie.id}, {movie.title}, {movie.release_date}");
+                    Console.WriteLine($"{movie.id}, {movie.title}, {movie.release_date}, {movie.vote_average}");
                 }
             }
         }
+        
+        public void GetMovieRating()
+        {
+            string usersRating;
+
+            foreach (var movie in movieList)
+            {
+                if (movie.userRating == 0 )
+                {
+                    Console.Write($"What would you rate {movie.title}: ");
+                    usersRating = Console.ReadLine();
+                    if( usersRating == "")
+                    {
+                        Console.WriteLine($"users movie rating = {movie.userRating}");
+                        string cmd = "INSERT INTO Watchlist(UserRating) VALUES (@UserRating)");
+
+                        using (SqlConnection connection = new SqlConnection(Program.connectionString))
+                        {
+                            using (SqlCommand command = new SqlCommand(cmd))
+                            {
+                                command.Parameters.Add("@UserRating", SqlDbType.Float).Value = usersRating;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        movie.userRating = Double.Parse(usersRating);
+                        Console.WriteLine("Movie rating has been added");
+                    }
+                }
+
+            }
+        }
+
+        private void UpdateWatchlist(string updateField, Movie movie)
+        {
+            if (updateField == "title")
+            {
+
+            }
+            else if (updateField == "releaseDate")
+            {
+
+            }
+            else if (updateField == "")
+            {
+
+            }    
+        }
+
+        
 
     }
 }

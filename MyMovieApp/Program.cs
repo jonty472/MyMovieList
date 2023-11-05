@@ -29,11 +29,16 @@ namespace MyMovieApp
             
             MovieList myList = new MovieList();
             
-            Movie movie = await myList.GetMovieAysnc(client, "Gladiator", 2000);
+            //Movie movie = await myList.GetMovieAysnc(client, "Gladiator", 2000);
             //Movie movie2 = await myList.GetMovieAysnc(client, "Oldboy", 2003);
-            myList.AddMovie(movie);
-            //myList.AddMovie(movie2);
+            Movie movie3 = new Movie() { id = 98, title = "Gladiator", release_date = "2000-05-04" };
+
+            Movie movie4 = new Movie() { id = 670, title = "Oldboy", release_date = "2003-11-21" };
+            myList.AddMovie(movie3);
+            myList.AddMovie(movie4);
             myList.DisplayMovieList();
+            myList.GetMovieRating();
+
         }
     }
 }
