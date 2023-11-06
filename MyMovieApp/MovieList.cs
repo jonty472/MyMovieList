@@ -132,41 +132,50 @@ namespace MyMovieApp
                 }
                 else
                 {
-                    Console.WriteLine($"{movie.id}, {movie.title}, {movie.release_date}, {movie.vote_average}");
+                    Console.WriteLine($"{movie.id}, {movie.title}, {movie.release_date}, {movie.userRating}");
                 }
             }
         }
         
-        public void GetMovieRating()
+        public void SetMovieListRating()
         {
-            string usersRating;
-
+            double usersRating;
             foreach (var movie in movieList)
             {
-                if (movie.userRating == 0 )
-                {
-                    Console.Write($"What would you rate {movie.title}: ");
-                    usersRating = Console.ReadLine();
-                    if( usersRating == "")
-                    {
-                        Console.WriteLine($"users movie rating = {movie.userRating}");
-                        string cmd = "INSERT INTO Watchlist(UserRating) VALUES (@UserRating)");
+                Console.WriteLine($"{movie.title} RATING? ");
 
-                        using (SqlConnection connection = new SqlConnection(Program.connectionString))
+                usersRating = double.Parse(Console.ReadLine());
+
+                if (usersRating == null)
+                {
+                    continue;
+                }
+                else if (usersRating != null || (usersRating >= 0 && usersRating <= 10))
+                {
+                    Console.WriteLine($"{movie.title} RATING {usersRating}");
+                    movie.userRating = usersRating;
+                    /*
+                    string cmd = "INSERT INTO Watchlist(UserRating) VALUES (@UserRating) WHERE Title = @MovieTitle";
+
+                    using (SqlConnection connection = new SqlConnection(Program.connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(cmd))
                         {
-                            using (SqlCommand command = new SqlCommand(cmd))
-                            {
-                                command.Parameters.Add("@UserRating", SqlDbType.Float).Value = usersRating;
-                            }
+                            command.Parameters.Add("@UserRating", SqlDbType.Float).Value = usersRating;
+                            command.Parameters.AddWithValue("@MovieTitle", SqlDbType.VarChar).Value = movie.title;
                         }
                     }
-                    else
-                    {
-                        movie.userRating = Double.Parse(usersRating);
-                        Console.WriteLine("Movie rating has been added");
-                    }
+                    */
                 }
 
+            }
+        }
+
+        public void GetMovieListRatings()
+        {
+            foreach (var movie in movieList)
+            {
+                Console.WriteLine($"{movie.id} | {movie.title} | {movie.userRating}");
             }
         }
 

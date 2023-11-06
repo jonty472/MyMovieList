@@ -37,8 +37,8 @@ namespace MyMovieApp
             myList.AddMovie(movie3);
             myList.AddMovie(movie4);
             myList.DisplayMovieList();
-            myList.GetMovieRating();
-
+            myList.SetMovieListRating();
+            myList.GetMovieListRatings();
         }
     }
 }
