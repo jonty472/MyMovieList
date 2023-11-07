@@ -4,8 +4,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using MyMovieApp.Helpers;
 
-namespace MyMovieApp
+namespace MyMovieApp.Watchlist
 {
 
     public class MovieList
@@ -142,7 +143,7 @@ namespace MyMovieApp
             double usersRating;
             foreach (var movie in movieList)
             {
-                Console.WriteLine($"{movie.title} RATING? ");
+                Console.Write($"{movie.title} RATING? ");
 
                 usersRating = double.Parse(Console.ReadLine());
 
@@ -152,7 +153,6 @@ namespace MyMovieApp
                 }
                 else if (usersRating != null || (usersRating >= 0 && usersRating <= 10))
                 {
-                    Console.WriteLine($"{movie.title} RATING {usersRating}");
                     movie.userRating = usersRating;
                     /*
                     string cmd = "INSERT INTO Watchlist(UserRating) VALUES (@UserRating) WHERE Title = @MovieTitle";
@@ -195,7 +195,9 @@ namespace MyMovieApp
             }    
         }
 
-        
-
+        public void SortByUserRating()
+        {
+            movieList.Sort(new CompareByUsersRating());
+        }
     }
 }

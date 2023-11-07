@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography.X509Certificates;
+using MyMovieApp.Watchlist;
 
 namespace MyMovieApp
 {
-    internal class Program
+    public class Program
     {
 
         /*
@@ -27,18 +28,20 @@ namespace MyMovieApp
         static async Task Main(string[] args)
         {
             
-            MovieList myList = new MovieList();
+            MovieList myList = new Watchlist.MovieList();
             
             //Movie movie = await myList.GetMovieAysnc(client, "Gladiator", 2000);
-            //Movie movie2 = await myList.GetMovieAysnc(client, "Oldboy", 2003);
+            Movie movie2 = await myList.GetMovieAysnc(client, "Lion King", 1994);
             Movie movie3 = new Movie() { id = 98, title = "Gladiator", release_date = "2000-05-04" };
 
             Movie movie4 = new Movie() { id = 670, title = "Oldboy", release_date = "2003-11-21" };
+            myList.AddMovie(movie2);
             myList.AddMovie(movie3);
             myList.AddMovie(movie4);
-            myList.DisplayMovieList();
             myList.SetMovieListRating();
             myList.GetMovieListRatings();
+            myList.SortByUserRating();
+            myList.DisplayMovieList();
         }
     }
 }
