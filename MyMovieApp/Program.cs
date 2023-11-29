@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography.X509Certificates;
-using MyMovieApp.Watchlist;
 
 namespace MyMovieApp
 {
@@ -27,21 +26,20 @@ namespace MyMovieApp
         public static readonly string connectionString = "Server=DESKTOP-7O5A39Q\\SQLEXPRESS ;Integrated Security=true; Database=MovieDatabase;";
         static async Task Main(string[] args)
         {
-            
-            MovieList myList = new Watchlist.MovieList();
-            
-            //Movie movie = await myList.GetMovieAysnc(client, "Gladiator", 2000);
-            Movie movie2 = await myList.GetMovieAysnc(client, "Lion King", 1994);
-            Movie movie3 = new Movie() { id = 98, title = "Gladiator", release_date = "2000-05-04" };
 
-            Movie movie4 = new Movie() { id = 670, title = "Oldboy", release_date = "2003-11-21" };
-            myList.AddMovie(movie2);
-            myList.AddMovie(movie3);
-            myList.AddMovie(movie4);
-            myList.SetMovieListRating();
-            myList.GetMovieListRatings();
-            myList.SortByUserRating();
-            myList.DisplayMovieList();
+            // lets treat program.cs like a form in delphi, but in this case the form is the console. 
+            // I need to instatiate my classes on the form first MovieList, which will be created empty. Then create a movie where
+            // we leave most of the properties blank or = null or load them as objects from the database
+
+            Watchlist myList = new Watchlist();
+            Movie movie = new Movie();
+            string movieRequest = await movie.GetMovieAysnc(client, "oldboy");
+            movie = movie.DeserializeMovieAsync(movieRequest);
+
+            myList.AddMovie(movie);
+
+            myList.GetMovies();
+
         }
     }
 }
