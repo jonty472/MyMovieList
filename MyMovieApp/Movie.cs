@@ -63,7 +63,6 @@ namespace MyMovieApp
 
         public async Task<string> GetMovieAysnc(HttpClient client, string title, int releaseDate)
         {
-            Console.WriteLine("");
             using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={title}&year={releaseDate}");
             string jsonResponse = await response.Content.ReadAsStringAsync();
             return jsonResponse;

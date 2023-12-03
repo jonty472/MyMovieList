@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 
 namespace MyMovieApp
@@ -33,13 +34,66 @@ namespace MyMovieApp
 
             Watchlist myList = new Watchlist();
             Movie movie = new Movie();
-            string movieRequest = await movie.GetMovieAysnc(client, "oldboy");
-            movie = movie.DeserializeMovieAsync(movieRequest);
+            bool showMenu = true;
+            //Console.Write("Already have a watchlist? [Y/N]:");
+            Console.Write("Username: ");
+            string username = Console.ReadLine();
+            User user = new User(username);
+            do
+            {
 
-            myList.AddMovie(movie);
+                ShowMenu();
 
-            myList.GetMovies();
+                string choice = Console.ReadLine();
 
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("Search Movies: ");
+                        string movieTitle = Console.ReadLine();
+                        string movieRequest = await movie.GetMovieAysnc(client, movieTitle);
+                        movie = movie.DeserializeMovieAsync(movieRequest);
+                        break;
+                    case "2":
+                        myList.AddMovie(movie);
+                        bool isRegistred = await user.IsRegistered(username);
+                        if (!isRegistred)
+                        {
+                            break;
+                        }
+                        myList.LoadToDatabase(myList.GetMovies(), username);
+                        break;
+                }
+            } while (showMenu);
         }
+
+        private static void ShowMenu()
+        {
+            if (Login())
+            {
+                Console.Clear();
+                Console.WriteLine(
+                        "1) Search for movie\n" +
+                        "2) Add movie to watchlist\n" +
+                        "3) Rate movie\n" +
+                        "4) Exit\n");
+
+            }
+        }
+
+        private static bool Login()
+        {
+            Console.WriteLine("Username: ");
+            string username = Console.ReadLine();
+            if (username != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }
