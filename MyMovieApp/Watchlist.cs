@@ -29,7 +29,7 @@ namespace MyMovieApp
             return movies;
         }
 
-        public async void LoadToDatabase(List<Movie> movies, string username)
+        public async void SaveToWatchlist(List<Movie> movies, User user)
         {
             string cmdText = "INSERT INTO Watchlist (UserID, MovieID) VALUES (" +
                 "(SELECT UserID FROM Users WHERE Username = @Username), " +
@@ -44,7 +44,7 @@ namespace MyMovieApp
                     {
                         using (SqlCommand cmd = new SqlCommand(cmdText, connection))
                         {
-                            cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = username;
+                            cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = user.GetUsername();
                             cmd.Parameters.AddWithValue("@Id", SqlDbType.VarChar).Value = movie.id;
                             connection.Open();
                             Object result = await cmd.ExecuteNonQueryAsync();

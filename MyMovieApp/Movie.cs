@@ -10,7 +10,7 @@ namespace MyMovieApp
 
     public class RootObject
     {
-        public List<Movie> results { get; set; }
+        public List<Movie>? results { get; set; }
     }
 
     public class Movie

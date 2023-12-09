@@ -6,12 +6,12 @@ ReleaseDate bigint not null
 );
 
 create table Users (
-UserId int not null primary key,
+UserId int not null primary key IDENTITY(1,1),
 Username varchar(255) not null UNIQUE
 );
 
 create table Watchlist (
-WatchlistId int not null primary key,
+WatchlistId int not null primary key IDENTITY(1,1),
 UserID int foreign key references Users(UserID),
 MovieID int foreign key references Movies(MovieID)
 );

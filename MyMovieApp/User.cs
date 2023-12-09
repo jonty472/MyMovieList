@@ -9,14 +9,16 @@ namespace MyMovieApp
 {
     public class User
     {
-        private string _username { get; set; }
+        private string _username;
 
-        public User(string username)
+        public string Username { set { _username = value; } get { return GetUsername(); } }
+
+        public User()
         {
-            _username = username;
+            _username = Username;
         }
 
-        public async Task<bool> IsRegistered(string username)
+        public async Task<bool> IsRegistered()
         {
             string cmdText = ("SELECT COUNT(*) FROM Users WHERE Username = @username");
 
@@ -24,9 +26,48 @@ namespace MyMovieApp
             {
                 using (SqlCommand cmd = new SqlCommand(cmdText, connection))
                 {
-                    cmd.Parameters.Add("@username", System.Data.SqlDbType.VarChar).Value = username;
-                    await cmd.ExecuteNonQueryAsync();
-                    return true;
+
+                    cmd.Parameters.Add("@username", System.Data.SqlDbType.VarChar).Value = _username;
+                    connection.Open();
+                    int rowsEffected = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    connection.Close();
+                    if (rowsEffected > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public string GetUsername()
+        {
+            return _username;
+        }
+
+        public async Task<int> RegisterUser(string username)
+        {
+            string cmdText = "INSERT INTO Users (Username) VALUES (@Username)";
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                try
+                {
+
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(cmdText, connection))
+                    {
+                        command.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = username;
+                        int result = await command.ExecuteNonQueryAsync();
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message); return -1;
                 }
             }
         }

@@ -34,66 +34,81 @@ namespace MyMovieApp
 
             Watchlist myList = new Watchlist();
             Movie movie = new Movie();
+            User user = new User();
             bool showMenu = true;
+            bool isLoggedIn = false;
             //Console.Write("Already have a watchlist? [Y/N]:");
-            Console.Write("Username: ");
-            string username = Console.ReadLine();
-            User user = new User(username);
             do
             {
 
-                ShowMenu();
+                if (!isLoggedIn)
+                {
+                    Console.Write("Username: ");
+                    string username = Console.ReadLine();
+                    user.Username = username;
+                    if (await user.IsRegistered() == true)
+                    {
+                        isLoggedIn = true;
+                    }
+                    else
+                    {
+                        await user.RegisterUser(username);
+                        isLoggedIn = true;
+                    }
+                }
+
+                ShowMenu(user.Username);
 
                 string choice = Console.ReadLine();
 
-                switch (choice)
+                if (await user.IsRegistered())
                 {
-                    case "1":
-                        Console.WriteLine("Search Movies: ");
-                        string movieTitle = Console.ReadLine();
-                        string movieRequest = await movie.GetMovieAysnc(client, movieTitle);
-                        movie = movie.DeserializeMovieAsync(movieRequest);
-                        break;
-                    case "2":
-                        myList.AddMovie(movie);
-                        bool isRegistred = await user.IsRegistered(username);
-                        if (!isRegistred)
-                        {
+                    switch (choice)
+                    {
+                        case "1":
+                            Console.WriteLine("Search Movies: ");
+                            string movieTitle = Console.ReadLine();
+                            string movieRequest = await movie.GetMovieAysnc(client, movieTitle);
+                            movie = movie.DeserializeMovieAsync(movieRequest);
                             break;
-                        }
-                        myList.LoadToDatabase(myList.GetMovies(), username);
-                        break;
+                        case "2":
+                            myList.AddMovie(movie);
+                            myList.SaveToWatchlist(myList.GetMovies(), user);
+                            break;
+                        case "3":
+                            break;
+                        case "4":
+                            break;
+                        case "5":
+                            break;
+                    }
                 }
             } while (showMenu);
+
         }
 
-        private static void ShowMenu()
+        private static void ShowMenu(string username)
         {
-            if (Login())
-            {
-                Console.Clear();
-                Console.WriteLine(
-                        "1) Search for movie\n" +
-                        "2) Add movie to watchlist\n" +
-                        "3) Rate movie\n" +
-                        "4) Exit\n");
+            Console.Clear();
+            Console.WriteLine($":{username}:");
+            Console.WriteLine(
+                    "1) Search for movie\n" +
+                    "2) Add movie to watchlist\n" +
+                    "3) Rate movie\n" +
+                    "4) My watchlist\n" +
+                    "5) Exit\n");
 
-            }
         }
 
-        private static bool Login()
+        private static void ShowLoginMenu()
         {
-            Console.WriteLine("Username: ");
-            string username = Console.ReadLine();
-            if (username != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Console.WriteLine();
         }
 
+        private static async void ShowRegisterMenu()
+        {
+            Console.WriteLine("======= Sign up ========");
+            Console.Write("Username");
+        }
     }
 }
