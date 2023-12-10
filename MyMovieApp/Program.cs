@@ -66,10 +66,21 @@ namespace MyMovieApp
                     switch (choice)
                     {
                         case "1":
-                            Console.WriteLine("Search Movies: ");
+                            Console.Write("Search Movies: ");
                             string movieTitle = Console.ReadLine();
-                            string movieRequest = await movie.GetMovieAysnc(client, movieTitle);
-                            movie = movie.DeserializeMovieAsync(movieRequest);
+                            if (!string.IsNullOrEmpty(movieTitle))
+                            {
+                                if (await movie.CheckDbForMovie(movieTitle))
+                                {
+                                    movie = await movie.GetMovieAsync(movieTitle);
+                                }
+                                else
+                                {
+                                    string movieRequest = await movie.GetMovieAsync(client, movieTitle);
+                                    movie = movie.DeserializeMovieAsync(movieRequest);
+                                    await movie.SaveToMovies();
+                                }
+                            }
                             break;
                         case "2":
                             myList.AddMovie(movie);

@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,18 +64,44 @@ namespace MyMovieApp
             this.vote_count = vote_count;
         }
 
-        public async Task<string> GetMovieAysnc(HttpClient client, string title, int releaseDate)
+        public async Task<string> GetMovieAsync(HttpClient client, string title, int releaseDate)
         {
             using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={title}&year={releaseDate}");
             string jsonResponse = await response.Content.ReadAsStringAsync();
             return jsonResponse;
         }
-        public async Task<string> GetMovieAysnc(HttpClient client, string title)
+        public async Task<string> GetMovieAsync(HttpClient client, string title)
         {
             using HttpResponseMessage response = await client.GetAsync($"https://api.themoviedb.org/3/search/movie?api_key=4cc1b68a07fe5ba265950e85ac96cb2c&query={title}");
             string jsonResponse = await response.Content.ReadAsStringAsync();
             return jsonResponse;
         }
+
+        public async Task<Movie> GetMovieAsync(string movieTitle)
+        {
+            Movie movie = new Movie();
+            string cmdText = "select MovieId, Title, ReleaseDate from Movies where Title = @Title";
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(cmdText, connection))
+                {
+                    cmd.Parameters.Add("@Title", SqlDbType.VarChar).Value = movieTitle;
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            movie.id = reader.GetInt32(0);
+                            movie.title = reader.GetString(1);
+                            movie.release_date = Convert.ToString(reader.GetInt64(2));
+                        }
+                    }
+                }
+            }
+            return movie;
+        }
+
         public Movie DeserializeMovieAsync(string jsonResponse)
         {
             RootObject? movies = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
@@ -126,5 +155,39 @@ namespace MyMovieApp
             }
         }
 
-    }
+        public async Task SaveToMovies()
+        {
+            string cmdText = "INSERT INTO Movies (MovieId, Title, ReleaseDate) VALUES (@MovieId, @Title, @ReleaseDate)";
+
+            using (SqlConnection conneciton = new SqlConnection(Program.connectionString))
+            {
+                conneciton.Open();
+
+                using (SqlCommand cmd = new SqlCommand(cmdText, conneciton))
+                {
+                    cmd.Parameters.Add("@MovieId", System.Data.SqlDbType.Int).Value = id;
+                    cmd.Parameters.AddWithValue("@Title", SqlDbType.VarChar).Value = title;
+                    cmd.Parameters.AddWithValue("@ReleaseDate", SqlDbType.BigInt).Value = DateTimeOffset.Parse(release_date).ToUnixTimeSeconds();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async Task<bool> CheckDbForMovie(string movieTitle)
+        {
+            string cmdText = "select Count(*) from Movies where Title = @Title;";
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(cmdText, connection))
+                {
+                    cmd.Parameters.Add("@Title", SqlDbType.VarChar).Value = movieTitle;
+                    int result = Convert.ToInt32(await (cmd.ExecuteScalarAsync()));
+                    return result > 0 ? true : false;
+                }
+            }
+        }
+
+            }
 }

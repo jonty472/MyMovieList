@@ -32,7 +32,7 @@ namespace MyMovieApp
         public async void SaveToWatchlist(List<Movie> movies, User user)
         {
             string cmdText = "INSERT INTO Watchlist (UserID, MovieID) VALUES (" +
-                "(SELECT UserID FROM Users WHERE Username = @Username), " +
+                "(SELECT UserId FROM Users WHERE Username = @Username), " +
                 "@Id); ";
 
             foreach (Movie movie in movies)
@@ -40,11 +40,11 @@ namespace MyMovieApp
 
                 try
                 {
-                    using (SqlConnection connection = new SqlConnection(cmdText))
+                    using (SqlConnection connection = new SqlConnection(Program.connectionString))
                     {
                         using (SqlCommand cmd = new SqlCommand(cmdText, connection))
                         {
-                            cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = user.GetUsername();
+                            cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = user.Username;
                             cmd.Parameters.AddWithValue("@Id", SqlDbType.VarChar).Value = movie.id;
                             connection.Open();
                             Object result = await cmd.ExecuteNonQueryAsync();
@@ -58,6 +58,11 @@ namespace MyMovieApp
                 }
             }
 
+        }
+
+        public async Task ViewWatchlist()
+        {
+            string cmdText = "SELECT * FROM Watchlist WHERE (Select ";
         }
     }
 }
