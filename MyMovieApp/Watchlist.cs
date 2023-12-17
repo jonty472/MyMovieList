@@ -70,9 +70,61 @@ namespace MyMovieApp
 
         }
 
-        public async Task ViewWatchlist()
+        public async Task<int> WatchlistCount(int userId)
         {
-            string cmdText = "SELECT * FROM Watchlist WHERE (Select ";
+            string cmdText = "SELECT COUNT(*) " +
+                             "FROM Watchlist " +
+                             "WHERE UserId = @UserId;";
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(cmdText, connection))
+                {
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            return reader.GetInt32(0);
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task ViewWatchlist(int userId)
+        {
+            string cmdText = "SELECT Title " +
+                            "FROM Watchlist INNER JOIN Movies ON Watchlist.MovieId = Movies.MovieId " +
+                            "WHERE Watchlist.UserId = 1;";
+
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(cmdText, connection))
+                {
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                Console.WriteLine($"{reader["Title"].ToString()}");
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

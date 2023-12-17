@@ -92,6 +92,8 @@ namespace MyMovieApp
                         case "3":
                             break;
                         case "4":
+                            // Console.WriteLine($"Watchlist Count: {await myList.WatchlistCount(user.GetUserId())}");
+                            await myList.ViewWatchlist(user.GetUserId());
                             break;
                         case "5":
                             break;

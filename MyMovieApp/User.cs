@@ -20,7 +20,7 @@ namespace MyMovieApp
 
         public async Task<bool> IsRegistered()
         {
-            string cmdText = ("SELECT COUNT(*) FROM Users WHERE Username = @username");
+            string cmdText = "SELECT COUNT(*) FROM Users WHERE Username = @username";
 
             using (SqlConnection connection = new SqlConnection(Program.connectionString))
             {
@@ -34,7 +34,6 @@ namespace MyMovieApp
                     if (value == 1)
                     {
                         Console.WriteLine("User exists.");
-                        Console.Write(value);
                         return true;
                     }
                     else
@@ -71,7 +70,7 @@ namespace MyMovieApp
                         }
                         else
                         {
-                            return 1;
+                            return 0;
                         }
                     }
                 }
