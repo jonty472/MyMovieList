@@ -24,28 +24,58 @@ namespace MyMovieApp
 
             using (SqlConnection connection = new SqlConnection(Program.connectionString))
             {
+                connection.Open();
                 using (SqlCommand cmd = new SqlCommand(cmdText, connection))
                 {
-
                     cmd.Parameters.Add("@username", System.Data.SqlDbType.VarChar).Value = _username;
-                    connection.Open();
-                    int rowsEffected = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                    connection.Close();
-                    if (rowsEffected > 0)
+
+                    object? result = await cmd.ExecuteScalarAsync();
+                    int? value = Convert.ToInt32(result);
+                    if (value == 1)
                     {
+                        Console.WriteLine("User exists.");
+                        Console.Write(value);
                         return true;
                     }
                     else
                     {
+                        Console.WriteLine("User doesn't exist.");
                         return false;
                     }
                 }
             }
         }
 
+                        
         public string GetUsername()
         {
             return _username;
+        }
+
+        public int GetUserId()
+        {
+            string cmdText = "select UserId from Users where Username = @Username";
+
+            using (SqlConnection connection = new SqlConnection(Program.connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(@cmdText, connection))
+                {
+                    cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = _username;
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // column 0 is UserId
+                            return reader.GetInt32(0);
+                        }
+                        else
+                        {
+                            return 1;
+                        }
+                    }
+                }
+            }
         }
 
         public async Task<int> RegisterUser(string username)
@@ -62,6 +92,7 @@ namespace MyMovieApp
                     {
                         command.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = username;
                         int result = await command.ExecuteNonQueryAsync();
+                        Console.WriteLine($"New Account Created.");
                         return result;
                     }
                 }

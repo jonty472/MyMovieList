@@ -31,9 +31,10 @@ namespace MyMovieApp
 
         public async void SaveToWatchlist(List<Movie> movies, User user)
         {
-            string cmdText = "INSERT INTO Watchlist (UserID, MovieID) VALUES (" +
-                "(SELECT UserId FROM Users WHERE Username = @Username), " +
-                "@Id); ";
+            string cmdText = "INSERT INTO Watchlist (UserID, MovieID) " +
+                "VALUES (@UserId, @MovieId);";
+
+            int userId = user.GetUserId();
 
             foreach (Movie movie in movies)
             {
@@ -42,13 +43,21 @@ namespace MyMovieApp
                 {
                     using (SqlConnection connection = new SqlConnection(Program.connectionString))
                     {
+                        connection.Open();
                         using (SqlCommand cmd = new SqlCommand(cmdText, connection))
                         {
-                            cmd.Parameters.Add("@Username", System.Data.SqlDbType.VarChar).Value = user.Username;
-                            cmd.Parameters.AddWithValue("@Id", SqlDbType.VarChar).Value = movie.id;
-                            connection.Open();
-                            Object result = await cmd.ExecuteNonQueryAsync();
-                            connection.Close();
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                            cmd.Parameters.AddWithValue("@MovieId", SqlDbType.Int).Value = movie.id;
+                            int rowsEffected = await cmd.ExecuteNonQueryAsync();
+
+                            if (rowsEffected > 0)
+                            {
+                                Console.WriteLine("Data inserted into Watchlist table");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Data inserted into Watchlist table");
+                            }
                         }
                     }
                 }
@@ -56,6 +65,7 @@ namespace MyMovieApp
                 {
                     Console.WriteLine(ex.Message);
                 }
+                finally { Console.WriteLine("movie(s) have been added to your watchlist");  }
             }
 
         }

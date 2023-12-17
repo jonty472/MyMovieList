@@ -44,7 +44,7 @@ namespace MyMovieApp
                 if (!isLoggedIn)
                 {
                     Console.Write("Username: ");
-                    string username = Console.ReadLine();
+                    string? username = Console.ReadLine();
                     user.Username = username;
                     if (await user.IsRegistered() == true)
                     {
@@ -59,7 +59,7 @@ namespace MyMovieApp
 
                 ShowMenu(user.Username);
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 if (await user.IsRegistered())
                 {
@@ -67,18 +67,21 @@ namespace MyMovieApp
                     {
                         case "1":
                             Console.Write("Search Movies: ");
-                            string movieTitle = Console.ReadLine();
+                            string? movieTitle = Console.ReadLine();
                             if (!string.IsNullOrEmpty(movieTitle))
                             {
                                 if (await movie.CheckDbForMovie(movieTitle))
                                 {
                                     movie = await movie.GetMovieAsync(movieTitle);
+                                    Console.Clear();
+                                    Console.WriteLine("Movie found in db. No API req.");
                                 }
                                 else
                                 {
                                     string movieRequest = await movie.GetMovieAsync(client, movieTitle);
                                     movie = movie.DeserializeMovieAsync(movieRequest);
                                     await movie.SaveToMovies();
+                                    Console.WriteLine("Found movie(s)");
                                 }
                             }
                             break;
@@ -100,7 +103,6 @@ namespace MyMovieApp
 
         private static void ShowMenu(string username)
         {
-            Console.Clear();
             Console.WriteLine($":{username}:");
             Console.WriteLine(
                     "1) Search for movie\n" +
