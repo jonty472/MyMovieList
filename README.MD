@@ -1,2 +1,5 @@
-#MyMovieList
-A way to document what i've watched and to learn more about C#
+Purpose - learn more about C#
+
+MyMovieList - using a lot of SqlConnection and SqlCommand to write Sql statements to the database.
+
+MyMovieList2 - Learn/use Entity Framework and LINQ instead of writing direct Sql statements.
