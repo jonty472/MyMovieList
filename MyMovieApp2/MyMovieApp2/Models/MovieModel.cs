@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace MyMovieApp2.Models;
 
 public class RootObject
@@ -6,9 +8,10 @@ public class RootObject
 }
 public class Movie 
 {
-    private int Id {get; set;}
-    private string? Title {get; set;}
-    private DateTime ReleaseDate {get; set;}
-    private decimal Rating {get; set;}
+    public int MovieId {get; set;}
+    public string? Title {get; set;}
+    public ulong ReleaseDate {get; set;}
+    public float Rating {get; set;}
 
+    public ICollection<Watchlist> Watchlists {get; set;}
 }
