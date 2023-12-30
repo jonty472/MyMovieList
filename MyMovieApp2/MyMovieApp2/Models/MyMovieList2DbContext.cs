@@ -14,14 +14,14 @@ public class MyMovieListDbContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Watchlist>()
-            .HasOne(watchlist => watchlist.Movie)
-            .WithMany(movie => movie.Watchlists)
-            .HasForeignKey(watchlist => watchlist.MovieId);
+        // // modelBuilder.Entity<Watchlist>()
+        // //     .HasOne(watchlist => watchlist.Movie)
+        // //     .WithMany(movie => movie.Watchlists)
+        // //     .HasForeignKey(watchlist => watchlist.MovieId);
 
-        modelBuilder.Entity<Watchlist>()
-        .HasOne(watchlist => watchlist.User)
-        .WithMany(user => user.Users)
-        .HasForeignKey(watchlist => watchlist.UserId);
+        // modelBuilder.Entity<Watchlist>()
+        // .HasOne(watchlist => watchlist.Users)
+        // .WithMany(user => user.Users)
+        // .HasForeignKey(watchlist => watchlist.UserId);
     }
 }

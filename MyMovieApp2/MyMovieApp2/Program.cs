@@ -1,30 +1,33 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MyMovieApp2.Models;
+using System;
 using System.IO;
+using System.Text.Json;
 
 class Program
 {
-    static void Main(string[] args)
+
+    public static readonly HttpClient client = new HttpClient();
+    static async Task Main()
     {
+        // correct api get request https://www.omdbapi.com/?s=gladiator&y=2000&apikey={apiKey}
+        // extra parameters should be done with &
+        string jsonResponse = await client.GetStringAsync($"http://www.omdbapi.com/?s=gladiator&y=2000&apiKey=487670a8");
+        JsonDocument jsonDocument = JsonDocument.Parse(jsonResponse);
+        List<Movie> movies = new List<Movie>();
+
         using (var myMovieList = new MyMovieListDbContext()) 
         {
-            var movie = new Movie
+            foreach (JsonElement movieElement in jsonDocument.RootElement.EnumerateArray())
             {
-                Title = "Gladiator",
-                ReleaseDate = 122,
-                Rating = 8
-            };
+                Movie movie = new Movie
+                {
+                    Title = movieElement.GetProperty("Title").GetString(),
+                    ReleaseDate = (ulong)DateTimeOffset.Parse(movieElement.GetProperty("ReleaseDate").ToString()).ToUnixTimeSeconds()
 
-            var user = new User
-            {
-                Username = "Jim",
-                RegisteredDate = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds
-            };
-
-            myMovieList.Movies.Add(movie);
-            myMovieList.Users.Add(user);
-            myMovieList.Watchlists.Add(new Watchlist {Movie = movie, User = user});
-            myMovieList.SaveChanges();
+                };
+                myMovieList.Movies.Add(movie);
+            }
         }
 
     }
