@@ -1,6 +1,6 @@
-@MyMovieListApi_HostAddress = http://localhost:5135
+@MyMovieListApi_HostAddress = http://localhost:5086
 
-GET {{MyMovieListApi_HostAddress}}/weatherforecast/
+GET {{MyMovieListApi_HostAddress}}/GetMovie/
 Accept: application/json
 
 ###
