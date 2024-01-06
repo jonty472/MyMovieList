@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 
 namespace MyMovieList.Models;
