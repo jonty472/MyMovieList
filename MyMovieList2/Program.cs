@@ -9,6 +9,12 @@ MVP
 - constraints on rating e.g. 1-10
 */
 
+BaseService baseService = new BaseService();
+
 MovieService movieService = new MovieService();
+
 WatchlistService watchlistService = new WatchlistService();
+
 UserService userService = new UserService();
+
+UserInterfaceService userInterfaceService = new UserInterfaceService(movieService, watchlistService, userService);

@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Sensitive data
-MyMovieApp2/MyMovieList2/appsettings.json
+MyMovieList2\appsettings.json

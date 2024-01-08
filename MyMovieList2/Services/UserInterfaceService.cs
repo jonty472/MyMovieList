@@ -8,7 +8,8 @@ public class UserInterfaceService
     public UserInterfaceService(
                                 MovieService movieService,
                                 WatchlistService watchlistService,
-                                UserService userService)
+                                UserService userService
+                                )
     {
         this._movieService = movieService;
         this._watchlistService = watchlistService;
@@ -16,4 +17,5 @@ public class UserInterfaceService
     }
 
     
+
 }

@@ -1,18 +1,18 @@
+using MyMovieList.Models;
+
 namespace MyMovieList.Services;
 
-public class MovieService
+public class MovieService : BaseService
 {
     // use MyMovieListDbContext here for the UI logic (e.g. don't need to re-created the movie properties)
+    public int Test()
+    {
+        var test1 = new BaseService();
+        return test1.GetValue();
+    }
 
-// MyMovieListDbContext dbContext = new MyMovieListDbContext();
-// Movie movie = new Movie()
-// {
-//     Title = "Test",
-//     Year = 2023,
-//     IMDbVotes = 1,
-//     IMDbRating = 10,
-// };
-
-// dbContext.Add(movie);
-// dbContext.SaveChanges();
+    public void Test2()
+    {
+        var title = _context.Movies.Where(movie => movie.Title.StartsWith("G"));
+    }
 }
