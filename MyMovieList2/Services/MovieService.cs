@@ -15,4 +15,9 @@ public class MovieService : BaseService
     {
         var title = _context.Movies.Where(movie => movie.Title.StartsWith("G"));
     }
+
+    public void AddMovie(string title)
+    {
+
+    }
 }

@@ -1,3 +1,5 @@
+using MyMovieList.Models;
+
 namespace MyMovieList.Services;
 
 public class UserInterfaceService
@@ -15,7 +17,19 @@ public class UserInterfaceService
         this._watchlistService = watchlistService;
         this._userService = userService;
     }
+    public string CreateUserAccount()
+    {
+        Console.Write("====Account Creation ====\n" +
+                           "Username? ");
+        string? username = Console.ReadLine();
+        _userService.AddUser(username);
+        return username;
+    }
 
-    
+    public DateTime GetUserCreationDate(string username)
+    {
+        return _userService.GetUserCreationDate(username);
+    }
+
 
 }
