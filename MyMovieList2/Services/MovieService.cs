@@ -15,9 +15,22 @@ public class MovieService : BaseService
     {
         var title = _context.Movies.Where(movie => movie.Title.StartsWith("G"));
     }
+    
+    private async Task<string> GetMovieAsync(string title)
+    {
+        return "";
+    }
+    private async Task<string> GetMovieAsync(string title, int releaseYear)
+    {
+        return "";
+    }
 
+    private Movie DeserializeMovieAsync(string jsonResponse)
+    {
+        return new Movie();
+    }
     public void AddMovie(string title)
     {
-
+        
     }
 }

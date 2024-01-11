@@ -19,7 +19,4 @@ UserService userService = new UserService();
 
 UserInterfaceService userInterfaceService = new UserInterfaceService(movieService, watchlistService, userService);
 
-string username = userInterfaceService.CreateUserAccount();
-
-var userCreationDate = userInterfaceService.GetUserCreationDate(username);
-Console.WriteLine(userCreationDate);
+userInterfaceService.MainMenuUserInterface();

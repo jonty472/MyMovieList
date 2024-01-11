@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
 
 namespace MyMovieList.Models;
 
@@ -12,6 +14,10 @@ public class MyMovieListDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
+        ConfigureMovie(modelBuilder.Entity<Movie>());
+
         modelBuilder.Entity<Movie>()
         .HasMany(entity => entity.Users)
         .WithMany(entity => entity.Movies)
@@ -46,5 +52,10 @@ public class MyMovieListDbContext : DbContext
         string? connectionString = appConfig.ConnectionString;
 
         optionsBuilder.UseSqlServer(connectionString);
+    }
+
+    private void ConfigureMovie(EntityTypeBuilder<Movie> movieBuilder)
+    {
+
     }
 }

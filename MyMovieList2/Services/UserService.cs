@@ -4,6 +4,8 @@ namespace MyMovieList.Services;
 
 public class UserService : BaseService
 {
+
+    public bool IsLoggedIn { get; set; }
     public void AddUser(string username)
     {
         var user = new User()
