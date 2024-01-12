@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # Sensitive data
 MyMovieList2\appsettings.json
+MyMovieList2/appsettings.json
