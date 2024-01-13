@@ -31,5 +31,27 @@ public class UserService : BaseService
        }
     }
 
+    public bool HasAccount(string username)
+    {
+        try
+        {
+            User user = _context.Users.Single(user => user.Username == username);
+            if (user.Username == username)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Single returns exception if the user doesn't exist so maybe use SingleOrDefault instead
+            //Console.WriteLine(ex.ToString());
+            return false;
+        }
+    }
+
 
 }

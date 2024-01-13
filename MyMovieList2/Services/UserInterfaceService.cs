@@ -22,8 +22,11 @@ public class UserInterfaceService
     {
         // display login menu first
         // once logged in show main menu
-    
+
+
         _isMainMenuDisplayed = true;
+        LoginMenu();
+
         Console.WriteLine("1) Create an account\n" +
                           "2) Add a movie\n" +
                           "3) Remove a movie\n" +
@@ -47,7 +50,37 @@ public class UserInterfaceService
 
     public void LoginMenu()
     {
+        while (!_userService.IsLoggedIn)
+        {
+            Console.WriteLine("1) Sign in\n2) Create account\n");
+            switch(Console.ReadLine())
+            {
+                case "1":
+                    Console.WriteLine("Attempting to login");
+                    Login();
+                    if (!_userService.IsLoggedIn)
+                    {
+                        string newUsersUsername = CreateUserAccount();
+                        Login();
+                    }
+                    break;
+                case "2":
+                    CreateUserAccount();
+                    Login();
+                    break;
+            }
+        }
+    }
 
+    public void Login()
+    {
+        Console.WriteLine("========= Login ========");
+        Console.Write("Useranme: ");
+        string? username = Console.ReadLine();
+        if (_userService.HasAccount(username))
+        {
+            _userService.IsLoggedIn = true;
+        }
     }
 
     public void AddMovieMenu()
