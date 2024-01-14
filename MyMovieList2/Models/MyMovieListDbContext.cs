@@ -16,7 +16,7 @@ public class MyMovieListDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        ConfigureMovie(modelBuilder.Entity<Movie>());
+        ConfigureMovieModel(modelBuilder.Entity<Movie>());
 
         modelBuilder.Entity<Movie>()
         .HasMany(entity => entity.Users)
@@ -54,7 +54,7 @@ public class MyMovieListDbContext : DbContext
         optionsBuilder.UseSqlServer(connectionString);
     }
 
-    private void ConfigureMovie(EntityTypeBuilder<Movie> movieBuilder)
+    private void ConfigureMovieModel(EntityTypeBuilder<Movie> movieBuilder)
     {
 
     }

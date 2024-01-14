@@ -40,8 +40,7 @@ public class UserInterfaceService
                     _isMainMenuDisplayed = false;
                     break;
                 case "2":
-                    Console.WriteLine("test movie search");
-                    _isMainMenuDisplayed = false;
+                    AddMovieMenu();
                     break;
 
             }
@@ -83,9 +82,9 @@ public class UserInterfaceService
         }
     }
 
-    public void AddMovieMenu()
+    public async void AddMovieMenu()
     {
-
+        Console.WriteLine(await _movieService.GetMovieAsync("Gladiator"));
     }
 
 

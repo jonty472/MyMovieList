@@ -19,7 +19,7 @@ public class UserService : BaseService
 
     public DateTime GetUserCreationDate(string username)
     {
-       User user = _context.Users.SingleOrDefault(user => user.Username == username);
+       User? user = _context.Users.SingleOrDefault(user => user.Username == username);
 
        if (user != null)
        {
@@ -33,10 +33,8 @@ public class UserService : BaseService
 
     public bool HasAccount(string username)
     {
-        try
-        {
-            User user = _context.Users.Single(user => user.Username == username);
-            if (user.Username == username)
+        User? user = _context.Users.SingleOrDefault(user => user.Username == username);
+            if (user != null)
             {
                 return true;
             }
@@ -44,13 +42,6 @@ public class UserService : BaseService
             {
                 return false;
             }
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Single returns exception if the user doesn't exist so maybe use SingleOrDefault instead
-            //Console.WriteLine(ex.ToString());
-            return false;
-        }
     }
 
 

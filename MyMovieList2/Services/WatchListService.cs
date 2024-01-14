@@ -4,6 +4,9 @@ namespace MyMovieList.Services;
 
 public class WatchlistService : BaseService
 {
-    // private readonly MyMovieListDbContext? _context;
-
+    public List<Movie> GetWatchlist(string username)
+    {
+        // _context.Watchlists.ToList(watchlist => watchlist.Movie)
+        return new List<Movie>();
+    }
 }

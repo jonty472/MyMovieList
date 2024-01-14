@@ -8,5 +8,6 @@ public class AppConfig
     public AppConfig(IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("MyMovieList");
+        ApiKey = configuration["OMDb:ApiKey"];
     }
 }
