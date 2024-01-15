@@ -84,7 +84,7 @@ public class UserInterfaceService
 
     public async void AddMovieMenu()
     {
-        Console.WriteLine(await _movieService.GetMovieAsync("Gladiator"));
+        await _movieService.GetMovieAsync("Gladiator");
     }
 
 

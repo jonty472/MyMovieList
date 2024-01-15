@@ -6,7 +6,7 @@ namespace MyMovieList.Services;
 
 public class MovieService : BaseService
 {
-    // use MyMovieListDbContext here for the UI logic (e.g. don't need to re-created the movie properties)
+    // use MyMovieListDbContext here for the UI logic (e.g. don't need to re-created the movie property)
     private readonly HttpClient client = new HttpClient();
     private string? _apiKey;
     public int Test()
@@ -37,29 +37,28 @@ public class MovieService : BaseService
     {
         GetApiKey();
         string jsonResponse = await client.GetStringAsync($"https://www.omdbapi.com/?s={title}&y={releaseYear}&apiKey={_apiKey}");
+        DeserializeMovie(jsonResponse);
         return jsonResponse;
 
     }
 
-    private void DeserializeMovie(string jsonResponse)
+    private List<Movie> DeserializeMovie(string jsonResponse)
     {
-        OMDbResponse? oMDbResponse = new OMDbResponse();
-        oMDbResponse = JsonConvert.DeserializeObject<OMDbResponse>(jsonResponse);
-        Console.WriteLine(oMDbResponse);
-        // foreach (var movie in oMDbResponse.Movies)
-        // {
-            // Console.WriteLine($"{movie.Title} | {movie.Year}");
-        //     Movie newMovie = new Movie()
-        //     {
-        //         Title = movie.Title,
-        //         Year = movie.Year
-        //     };
 
-        //     _context.Add(newMovie);
-        // }
-        // _context.SaveChanges();
-        // }
-
+        OMDbResponse? oMDbResponse = JsonConvert.DeserializeObject<OMDbResponse>(jsonResponse);
+        List<Movie> movies = new List<Movie>();
+        foreach (var property in oMDbResponse.Movies)
+        {
+            Movie movie = new Movie()
+            {
+                Title = property.Title,
+                Year = property.Year,
+                IMDbVotes = property.IMDbVotes,
+                IMDbRating = property.IMDbRating
+            };
+            movies.Add(movie);
+        }
+        return movies;
     }
     public async Task AddMovie(string title)
     {
