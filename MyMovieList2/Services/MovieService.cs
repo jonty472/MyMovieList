@@ -1,6 +1,7 @@
 using MyMovieList.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MyMovieList.Services;
 
@@ -26,20 +27,17 @@ public class MovieService : BaseService
         _apiKey = appConfig.ApiKey;
     }
     
-    public async Task<string> GetMovieAsync(string title)
+    public async Task<List<Movie>> GetMovieAsync(string title)
     {
         GetApiKey();
         string jsonResponse = await client.GetStringAsync($"https://www.omdbapi.com/?s={title}&apiKey={_apiKey}");
-        DeserializeMovie(jsonResponse);
-        return jsonResponse;
+        return DeserializeMovie(jsonResponse);
     }
-    public async Task<string> GetMovieAsync(string title, int releaseYear)
+    public async Task<List<Movie>> GetMovieAsync(string title, int releaseYear)
     {
         GetApiKey();
         string jsonResponse = await client.GetStringAsync($"https://www.omdbapi.com/?s={title}&y={releaseYear}&apiKey={_apiKey}");
-        DeserializeMovie(jsonResponse);
-        return jsonResponse;
-
+        return DeserializeMovie(jsonResponse);
     }
 
     private List<Movie> DeserializeMovie(string jsonResponse)
@@ -60,7 +58,9 @@ public class MovieService : BaseService
         }
         return movies;
     }
-    public async Task AddMovie(string title)
+    public void AddMovie(Movie movie)
     {
+        _context.Add(movie);
+        _context.SaveChanges();
     }
 }

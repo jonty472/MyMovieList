@@ -35,7 +35,6 @@ public class MyMovieListDbContext : DbContext
         modelBuilder.Entity<Movie>(entity =>
         {
             entity.Property(entity => entity.Title).IsRequired();
-            entity.HasIndex(entity => entity.Title).IsUnique();
             entity.Property(entity => entity.Year).IsRequired();
         });
 

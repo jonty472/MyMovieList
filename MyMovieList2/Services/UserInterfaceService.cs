@@ -1,4 +1,6 @@
+using Microsoft.IdentityModel.Tokens;
 using MyMovieList.Models;
+using Newtonsoft.Json.Bson;
 
 namespace MyMovieList.Services;
 
@@ -18,89 +20,56 @@ public class UserInterfaceService
         this._watchlistService = watchlistService;
         this._userService = userService;
     }
-    public void MainMenuUserInterface()
+
+    public async Task MainMenuUserInterface()
     {
-        // display login menu first
-        // once logged in show main menu
+        // login menu
+        // add movie menu
+        await AddMovie();
+    }
 
+    private void LoginMenu(User user)
+    {
 
-        _isMainMenuDisplayed = true;
-        LoginMenu();
+    }
 
-        Console.WriteLine("1) Create an account\n" +
-                          "2) Add a movie\n" +
-                          "3) Remove a movie\n" +
-                          "4) View watchlist");   
-        while (_isMainMenuDisplayed)
+    private void Login()
+    {
+
+    }
+
+    private async Task AddMovie()
+    {
+        List<Movie> movies = await _movieService.GetMovieAsync("Gladiator");
+
+        foreach (var movie in movies)
         {
-            switch(Console.ReadLine())
+            if(CorrectMovie(movie))
             {
-                case "1":
-                    Console.WriteLine("test login");
-                    _isMainMenuDisplayed = false;
-                    break;
-                case "2":
-                    AddMovieMenu();
-                    break;
-
+                break;
             }
         }
     }
 
-    public void LoginMenu()
+    private bool CorrectMovie(Movie movie)
     {
-        while (!_userService.IsLoggedIn)
+        bool correctMovie = false;
+        while (!correctMovie)
         {
-            Console.WriteLine("1) Sign in\n2) Create account\n");
-            switch(Console.ReadLine())
+            string? response = "";
+            Console.Write($"{movie.Title}, {movie.Year}\nRight Movie? ");
+            response = Console.ReadLine();
+            if (response == "Y" || response == "y")
             {
-                case "1":
-                    Console.WriteLine("Attempting to login");
-                    Login();
-                    if (!_userService.IsLoggedIn)
-                    {
-                        string newUsersUsername = CreateUserAccount();
-                        Login();
-                    }
-                    break;
-                case "2":
-                    CreateUserAccount();
-                    Login();
-                    break;
+                correctMovie = true;
+                return true;
+            }
+            else if (response == "N" || response == "n")
+            {
+                return false;
             }
         }
+        return correctMovie;
     }
-
-    public void Login()
-    {
-        Console.WriteLine("========= Login ========");
-        Console.Write("Useranme: ");
-        string? username = Console.ReadLine();
-        if (_userService.HasAccount(username))
-        {
-            _userService.IsLoggedIn = true;
-        }
-    }
-
-    public async void AddMovieMenu()
-    {
-        await _movieService.GetMovieAsync("Gladiator");
-    }
-
-
-    public string CreateUserAccount()
-    {
-        Console.Write("====Account Creation ====\n" +
-                           "Username? ");
-        string? username = Console.ReadLine();
-        _userService.AddUser(username);
-        return username;
-    }
-
-    public DateTime GetUserCreationDate(string username)
-    {
-        return _userService.GetUserCreationDate(username);
-    }
-
     
 }
