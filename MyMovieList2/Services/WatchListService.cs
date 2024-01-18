@@ -9,4 +9,16 @@ public class WatchlistService : BaseService
         // _context.Watchlists.ToList(watchlist => watchlist.Movie)
         return new List<Movie>();
     }
+
+    public void AddMovieToWatchlist(User user, Movie movie)
+    {
+        Watchlist watchlist = new Watchlist()
+        {
+            MovieId = movie.Id,
+            UserId = user.Id,
+            UserRating = 9
+        };
+        _context.Watchlists.Add(watchlist);
+        _context.SaveChanges();
+    }
 }

@@ -6,6 +6,8 @@ namespace MyMovieList.Services;
 
 public class UserInterfaceService
 {
+    private Movie? _movie;
+    private User? _user;
     private MovieService _movieService;
     private WatchlistService _watchlistService;
     private UserService _userService;
@@ -21,34 +23,98 @@ public class UserInterfaceService
         this._userService = userService;
     }
 
-    public async Task MainMenuUserInterface()
+    public async Task UserInterface()
     {
-        // login menu
-        // add movie menu
-        await AddMovie();
+        bool showMainMenu = true;
+        LoginMenu();
+        // await AddMovie();
+
+        while(showMainMenu)
+        {
+            Console.WriteLine(
+                "1) Get movie" +
+                "2) Add to my movielist"
+            );
+
+            switch(Console.ReadLine())
+            {
+                case "1":
+                    // EditMovieListMenu();
+                    await AddMovie();
+                    break;
+                case "2":
+                    _movie = await GetMovie("Gladiator");
+                    AddMovieToWatchlist();
+                    break;
+            }
+        }
     }
 
-    private void LoginMenu(User user)
+    private void LoginMenu()
     {
-
+        while(!_userService.IsLoggedIn)
+        {
+            Console.WriteLine("1) Login\n" +
+                              "2) Create an account");
+            
+            switch(Console.ReadLine())
+            {
+                case "1":
+                    Login();
+                    break;
+            }
+        }
     }
 
     private void Login()
-    {
-
+    {   string? username = "";
+        Console.Write("Username: ");
+        username = Console.ReadLine();
+        if (_userService.HasAccount(username))
+        {
+            Console.Write("Sucessfully logged in.");
+            _user = _userService.GetUser(username);
+            _userService.IsLoggedIn = true;
+        }
+        else
+        {
+            Console.WriteLine("Account doesn't exist.");
+        }
     }
 
+    private void EditMovieListMenu()
+    {
+        
+    }
     private async Task AddMovie()
     {
-        List<Movie> movies = await _movieService.GetMovieAsync("Gladiator");
+        Console.Write("Movie title? ");
+        string? movieTitle = Console.ReadLine();
+        List<Movie> movies = await _movieService.GetMovieAsync(movieTitle);
 
         foreach (var movie in movies)
         {
             if(CorrectMovie(movie))
             {
-                break;
+                await _movieService.AddMovie(movie);
+                Console.WriteLine("Movie added.");
             }
         }
+
+    }
+
+    private async Task<Movie> GetMovie(string title)
+    {
+        return await _movieService.GetMovieLocallyAsync(title);
+    }
+
+    private void AddMovieToWatchlist()
+    {
+        if (_user == null || _movie == null)
+        {
+            throw new Exception("user or movie doesn't exist");
+        }
+        _watchlistService.AddMovieToWatchlist(_user, _movie);
     }
 
     private bool CorrectMovie(Movie movie)
@@ -56,9 +122,8 @@ public class UserInterfaceService
         bool correctMovie = false;
         while (!correctMovie)
         {
-            string? response = "";
             Console.Write($"{movie.Title}, {movie.Year}\nRight Movie? ");
-            response = Console.ReadLine();
+            string? response = Console.ReadLine();
             if (response == "Y" || response == "y")
             {
                 correctMovie = true;

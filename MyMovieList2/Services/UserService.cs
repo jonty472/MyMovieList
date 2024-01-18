@@ -6,7 +6,7 @@ public class UserService : BaseService
 {
 
     public bool IsLoggedIn { get; set; }
-    public void AddUser(string username)
+    public User AddUser(string username)
     {
         var user = new User()
         {
@@ -15,6 +15,7 @@ public class UserService : BaseService
         };
         _context.Add(user);
         _context.SaveChanges();
+        return user;
     }
 
     public DateTime GetUserCreationDate(string username)
@@ -42,6 +43,20 @@ public class UserService : BaseService
             {
                 return false;
             }
+    }
+
+    public User GetUser(string username)
+    {
+        User? user = _context.Users.FirstOrDefault(user => user.Username == username);
+
+        if (user != null)
+        {
+            return user;
+        }
+        else
+        {
+            return AddUser(username);
+        }
     }
 
 

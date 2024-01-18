@@ -2,6 +2,7 @@ using MyMovieList.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyMovieList.Services;
 
@@ -40,6 +41,29 @@ public class MovieService : BaseService
         return DeserializeMovie(jsonResponse);
     }
 
+    public async Task<Movie> GetMovieLocallyAsync(string movieTitle)
+    {
+        Movie? movie = new Movie();
+        try
+        {
+            movie = await _context.Movies.FirstOrDefaultAsync(movie => movie.Title == movieTitle);
+        } 
+        catch(Exception ex)
+        {
+            if (movie == null)
+            {
+                throw new DllNotFoundException("[Exception] movie not found");
+            }
+            else
+            {
+                Console.WriteLine(ex.Message.ToString());
+            }
+        }
+
+        return movie;
+
+    }
+
     private List<Movie> DeserializeMovie(string jsonResponse)
     {
 
@@ -58,9 +82,9 @@ public class MovieService : BaseService
         }
         return movies;
     }
-    public void AddMovie(Movie movie)
+    public async Task AddMovie(Movie movie)
     {
-        _context.Add(movie);
-        _context.SaveChanges();
+        await _context.AddAsync(movie);
+        await _context.SaveChangesAsync();
     }
 }

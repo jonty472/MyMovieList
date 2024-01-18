@@ -19,4 +19,4 @@ UserService userService = new UserService();
 
 UserInterfaceService userInterfaceService = new UserInterfaceService(movieService, watchlistService, userService);
 
-await userInterfaceService.MainMenuUserInterface();
+await userInterfaceService.UserInterface();
