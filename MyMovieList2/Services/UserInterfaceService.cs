@@ -26,25 +26,33 @@ public class UserInterfaceService
     public async Task UserInterface()
     {
         bool showMainMenu = true;
-        LoginMenu();
+        // LoginMenu();
         // await AddMovie();
 
         while(showMainMenu)
         {
             Console.WriteLine(
-                "1) Get movie" +
-                "2) Add to my movielist"
+                "1) Add movie to MyMovieList\n"
+                // "2) Edit MyMovieList\n" +
+                // "3) test\n"
             );
 
             switch(Console.ReadLine())
             {
                 case "1":
-                    // EditMovieListMenu();
-                    await AddMovie();
+                    Movie movie = await _movieService.GetMovieFromDbAsync("oldboy");
+                    if (movie.Title.IsNullOrEmpty())
+                    {
+                        Console.WriteLine("movie doesn't exist");
+                    }
+                    else
+                    {
+                        _movie = movie;
+                    }
                     break;
                 case "2":
-                    _movie = await GetMovie("Gladiator");
-                    AddMovieToWatchlist();
+                    break;
+                case "3":
                     break;
             }
         }
@@ -52,6 +60,7 @@ public class UserInterfaceService
 
     private void LoginMenu()
     {
+        Console.Clear();
         while(!_userService.IsLoggedIn)
         {
             Console.WriteLine("1) Login\n" +
@@ -84,13 +93,10 @@ public class UserInterfaceService
 
     private void EditMovieListMenu()
     {
-        
     }
-    private async Task AddMovie()
+    private async Task AddMovie(string title)
     {
-        Console.Write("Movie title? ");
-        string? movieTitle = Console.ReadLine();
-        List<Movie> movies = await _movieService.GetMovieAsync(movieTitle);
+        List<Movie> movies = await _movieService.GetMovieAsync(title);
 
         foreach (var movie in movies)
         {
@@ -100,12 +106,11 @@ public class UserInterfaceService
                 Console.WriteLine("Movie added.");
             }
         }
-
     }
 
     private async Task<Movie> GetMovie(string title)
     {
-        return await _movieService.GetMovieLocallyAsync(title);
+        return await _movieService.GetMovieFromDbAsync(title);
     }
 
     private void AddMovieToWatchlist()

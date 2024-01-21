@@ -16,7 +16,7 @@ public class MovieService : BaseService
         var test1 = new BaseService();
         return test1.GetValue();
     }
-    // should probably also do DI with this as well e.g. should be handeled within AppConfig
+    // should probably also do DI with this as well e.g. should be handlesd within AppConfig
     private void GetApiKey()
     {
         string currentDirectory = Directory.GetCurrentDirectory();
@@ -41,25 +41,14 @@ public class MovieService : BaseService
         return DeserializeMovie(jsonResponse);
     }
 
-    public async Task<Movie> GetMovieLocallyAsync(string movieTitle)
+    public async Task<Movie> GetMovieFromDbAsync(string movieTitle)
     {
         Movie? movie = new Movie();
-        try
+        movie = await _context.Movies.FirstOrDefaultAsync(movie => movie.Title == movieTitle);
+        if (movie == null)
         {
-            movie = await _context.Movies.FirstOrDefaultAsync(movie => movie.Title == movieTitle);
-        } 
-        catch(Exception ex)
-        {
-            if (movie == null)
-            {
-                throw new DllNotFoundException("[Exception] movie not found");
-            }
-            else
-            {
-                Console.WriteLine(ex.Message.ToString());
-            }
+            return new Movie();
         }
-
         return movie;
 
     }
