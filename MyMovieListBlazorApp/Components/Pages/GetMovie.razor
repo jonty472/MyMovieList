@@ -1,0 +1,21 @@
+@page "/GetMovie"
+@inject Movie _movie
+@inject MovieService _movieService
+
+<PageTitle>GetMovie</PageTitle>
+
+<h1>Testing</h1>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+
+    private int currentCount = 0;
+    [Parameter]
+    public int IncrementAmount { get; set; }
+
+    private void IncrementCount()
+    {
+        currentCount += IncrementAmount;
+    }
+}
